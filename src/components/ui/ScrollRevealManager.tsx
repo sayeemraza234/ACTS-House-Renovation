@@ -35,19 +35,20 @@ export function ScrollRevealManager() {
         })
       },
       {
-        rootMargin: '0px 0px -40px 0px',
-        threshold: 0.08,
+        rootMargin: '100px 0px 100px 0px',
+        threshold: 0.01,
       }
     )
 
     const attachObservers = () => {
+      const vh = window.innerHeight || document.documentElement.clientHeight || 800
       const elements = document.querySelectorAll(
         '.reveal-on-scroll, .reveal-text, .reveal-card, .reveal-stat, .reveal-scale, .reveal-badge'
       )
       elements.forEach((el) => {
-        // If element is already above or within the initial viewport, reveal smoothly
         const rect = el.getBoundingClientRect()
-        if (rect.top < window.innerHeight - 30) {
+        // If element is already within or near the viewport, reveal smoothly
+        if (rect.top <= vh + 80) {
           el.classList.add('is-revealed')
         } else if (!el.classList.contains('is-revealed')) {
           observer.observe(el)
@@ -56,10 +57,17 @@ export function ScrollRevealManager() {
     }
 
     // Initial check after paint
-    const timer = setTimeout(attachObservers, 60)
+    const timer = setTimeout(attachObservers, 40)
+    const timer2 = setTimeout(attachObservers, 250)
 
-    // Secondary pass to account for image loads or late layout shifts
-    const timer2 = setTimeout(attachObservers, 350)
+    // Fallback: after 800ms reveal any remaining observed elements so nothing stays hidden
+    const timer3 = setTimeout(() => {
+      document
+        .querySelectorAll(
+          '.reveal-on-scroll, .reveal-text, .reveal-card, .reveal-stat, .reveal-scale, .reveal-badge'
+        )
+        .forEach((el) => el.classList.add('is-revealed'))
+    }, 800)
 
     // MutationObserver to observe newly rendered dynamic components
     const mutObserver = new MutationObserver(() => {
@@ -71,6 +79,7 @@ export function ScrollRevealManager() {
     return () => {
       clearTimeout(timer)
       clearTimeout(timer2)
+      clearTimeout(timer3)
       observer.disconnect()
       mutObserver.disconnect()
     }
