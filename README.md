@@ -160,8 +160,6 @@ acts-house-renovation/
 ├── package.json                # Project dependencies and scripts
 ├── tsconfig.json               # TypeScript compiler config
 ├── vite.config.ts              # Vite configuration
-├── start-project.bat           # Quick launcher for local dev
-├── stop-project.bat            # Quick stopper for local processes
 └── sync-project.bat            # Automated git synchronization script
 ```
 
@@ -220,9 +218,7 @@ Ensure you have the following installed:
 
 ## ⚙️ One-Click Utility Scripts
 
-For Windows developers, handy batch scripts are provided in the root directory:
-- `start-project.bat`: One-click dependency check and development server launch.
-- `stop-project.bat`: Gracefully stops any active Node/Vite processes on port 5173.
+For Windows developers, a handy batch script is provided in the root directory:
 - `sync-project.bat`: Safe automated helper for staging, committing, and synchronizing with remote repositories.
 
 ---

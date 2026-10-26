@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://acts.ae/sitemap.xml
+Sitemap: https://aftabchandiotechnicalservices.ae/sitemap.xml

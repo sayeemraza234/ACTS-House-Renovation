@@ -42,7 +42,7 @@ export const siteConfig = {
   operatingTerritoryAr: 'في جميع أنحاء الإمارات',
 
   /** SEO */
-  domain: import.meta.env.VITE_SITE_DOMAIN || 'https://acts.ae',
+  domain: import.meta.env.VITE_SITE_DOMAIN || 'https://aftabchandiotechnicalservices.ae',
   siteName: 'ACTS UAE — Aftab Chandio Technical Services',
   defaultTitle: 'ACTS UAE — Renovation, Swimming Pools & Landscape Gardening',
   defaultDescription:

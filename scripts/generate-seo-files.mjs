@@ -5,7 +5,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const domain = (process.env.VITE_SITE_DOMAIN || 'https://acts.ae').replace(/\/+$/, '')
+const domain = (process.env.VITE_SITE_DOMAIN || 'https://aftabchandiotechnicalservices.ae').replace(/\/+$/, '')
 const servicesSource = readFileSync(resolve(root, 'src/data/services.ts'), 'utf8')
 const serviceSlugs = [...servicesSource.matchAll(/slug:\s*'([^']+)'/g)].map((match) => match[1])
 const routes = ['/', '/about', '/services', ...serviceSlugs.map((slug) => `/services/${slug}`), '/projects', '/contact']

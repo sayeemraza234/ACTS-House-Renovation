@@ -28,30 +28,33 @@ if not defined REMOTE (
     goto :failed
 )
 
-echo Checking GitHub for updates...
-git fetch origin main
+for /f "delims=" %%B in ('git branch --show-current 2^>nul') do set "BRANCH=%%B"
+if not defined BRANCH set "BRANCH=main"
+
+echo Checking GitHub for updates (%BRANCH%)...
+git fetch origin %BRANCH%
 if errorlevel 1 (
     echo ERROR: Could not contact GitHub. Check your internet connection and GitHub login.
     goto :failed
 )
 
-for /f "tokens=1,2" %%A in ('git rev-list --left-right --count main...origin/main') do (
+for /f "tokens=1,2" %%A in ('git rev-list --left-right --count %BRANCH%...origin/%BRANCH% 2^>nul') do (
     set "LOCAL_COMMITS=%%A"
     set "REMOTE_COMMITS=%%B"
 )
 
-set "LOCAL_FILES_CHANGED="
-for /f "delims=" %%A in ('powershell -NoProfile -ExecutionPolicy Bypass -Command "$changes = @(git status --porcelain); $changes = $changes | Where-Object { $_ -notmatch '^\?\? (node_modules|dist)(\\|/)' }; if ($changes.Count -gt 0) { 'yes' }"') do set "LOCAL_FILES_CHANGED=%%A"
-
 if not defined LOCAL_COMMITS set "LOCAL_COMMITS=0"
 if not defined REMOTE_COMMITS set "REMOTE_COMMITS=0"
+
+set "LOCAL_FILES_CHANGED="
+for /f "delims=" %%A in ('git status --porcelain 2^>nul') do set "LOCAL_FILES_CHANGED=yes"
 
 if "%REMOTE_COMMITS%" GTR "0" (
     if "%LOCAL_COMMITS%" GTR "0" goto :conflict
     if defined LOCAL_FILES_CHANGED goto :conflict
 
     echo GitHub has newer changes. Updating local files...
-    git merge --ff-only origin/main
+    git merge --ff-only origin/%BRANCH%
     if errorlevel 1 goto :failed
     echo.
     echo Local files are now up to date with GitHub.
@@ -60,7 +63,7 @@ if "%REMOTE_COMMITS%" GTR "0" (
 
 if defined LOCAL_FILES_CHANGED (
     echo Local changes found. Saving and pushing them to GitHub...
-    git add -A -- . ":(exclude)node_modules" ":(exclude)dist"
+    git add -A
     if errorlevel 1 goto :failed
 
     git diff --cached --quiet
@@ -69,7 +72,7 @@ if defined LOCAL_FILES_CHANGED (
         if errorlevel 1 goto :failed
     )
 
-    git push origin main
+    git push origin %BRANCH%
     if errorlevel 1 goto :failed
     echo.
     echo Local changes were pushed to GitHub.
@@ -78,7 +81,7 @@ if defined LOCAL_FILES_CHANGED (
 
 if "%LOCAL_COMMITS%" GTR "0" (
     echo Local commits found. Pushing them to GitHub...
-    git push origin main
+    git push origin %BRANCH%
     if errorlevel 1 goto :failed
     echo.
     echo Local commits were pushed to GitHub.
